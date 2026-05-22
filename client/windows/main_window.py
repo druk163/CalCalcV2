@@ -1,7 +1,15 @@
 from PyQt6.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QLabel, QPushButton, QTableWidget, QTableWidgetItem,
-    QProgressBar, QMessageBox, QHeaderView
+    QMainWindow,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QTableWidget,
+    QTableWidgetItem,
+    QProgressBar,
+    QMessageBox,
+    QHeaderView,
 )
 from datetime import date, timedelta
 
@@ -27,8 +35,7 @@ class MainWindow(QMainWindow):
         header = QHBoxLayout()
         user = self.api.current_user
         welcome = QLabel(
-            f"Пользователь: {user['username']}  |  "
-            f"Цель: {user['daily_goal_kcal']} ккал/день"
+            f"Пользователь: {user['username']}  |  " f"Цель: {user['daily_goal_kcal']} ккал/день"
         )
         welcome.setStyleSheet("font-size: 16px; font-weight: bold;")
         header.addWidget(welcome)
@@ -39,9 +46,7 @@ class MainWindow(QMainWindow):
         header.addWidget(btn_prev)
 
         self.date_label = QLabel(str(self.current_date))
-        self.date_label.setStyleSheet(
-            "font-size: 16px; font-weight: bold;"
-        )
+        self.date_label.setStyleSheet("font-size: 16px; font-weight: bold;")
         header.addWidget(self.date_label)
 
         btn_next = QPushButton("Завтра >")
@@ -78,13 +83,10 @@ class MainWindow(QMainWindow):
         # Таблица
         self.table = QTableWidget()
         self.table.setColumnCount(6)
-        self.table.setHorizontalHeaderLabels([
-            "Приём пищи", "Продукт", "Вес (г)",
-            "Ккал", "Б/Ж/У", "Удалить"
-        ])
-        self.table.horizontalHeader().setSectionResizeMode(
-            QHeaderView.ResizeMode.Stretch
+        self.table.setHorizontalHeaderLabels(
+            ["Приём пищи", "Продукт", "Вес (г)", "Ккал", "Б/Ж/У", "Удалить"]
         )
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         layout.addWidget(self.table)
 
         # Кнопки
@@ -92,8 +94,7 @@ class MainWindow(QMainWindow):
 
         btn_add = QPushButton("Добавить приём пищи")
         btn_add.setStyleSheet(
-            "padding: 10px; font-size: 14px; "
-            "background-color: #4CAF50; color: white;"
+            "padding: 10px; font-size: 14px; " "background-color: #4CAF50; color: white;"
         )
         btn_add.clicked.connect(self.open_add_meal)
         btn_layout.addWidget(btn_add)
@@ -124,15 +125,9 @@ class MainWindow(QMainWindow):
             data = resp.json()
 
             self.cal_progress.setValue(int(data["total_calories"]))
-            self.prot_label.setText(
-                f"Белки: {data['total_proteins']} г"
-            )
-            self.fat_label.setText(
-                f"Жиры: {data['total_fats']} г"
-            )
-            self.carb_label.setText(
-                f"Углеводы: {data['total_carbs']} г"
-            )
+            self.prot_label.setText(f"Белки: {data['total_proteins']} г")
+            self.fat_label.setText(f"Жиры: {data['total_fats']} г")
+            self.carb_label.setText(f"Углеводы: {data['total_carbs']} г")
 
             self.table.setRowCount(0)
             meal_names = {
@@ -147,41 +142,28 @@ class MainWindow(QMainWindow):
                     row = self.table.rowCount()
                     self.table.insertRow(row)
 
-                    self.table.setItem(row, 0, QTableWidgetItem(
-                        meal_names.get(
-                            meal["meal_type"], meal["meal_type"]
-                        )
-                    ))
                     self.table.setItem(
-                        row, 1,
-                        QTableWidgetItem(item["product_name"])
+                        row,
+                        0,
+                        QTableWidgetItem(meal_names.get(meal["meal_type"], meal["meal_type"])),
                     )
+                    self.table.setItem(row, 1, QTableWidgetItem(item["product_name"]))
+                    self.table.setItem(row, 2, QTableWidgetItem(str(item["weight_grams"])))
+                    self.table.setItem(row, 3, QTableWidgetItem(str(item["calories"])))
                     self.table.setItem(
-                        row, 2,
-                        QTableWidgetItem(str(item["weight_grams"]))
+                        row,
+                        4,
+                        QTableWidgetItem(
+                            f"{item['proteins']}/" f"{item['fats']}/" f"{item['carbs']}"
+                        ),
                     )
-                    self.table.setItem(
-                        row, 3,
-                        QTableWidgetItem(str(item["calories"]))
-                    )
-                    self.table.setItem(row, 4, QTableWidgetItem(
-                        f"{item['proteins']}/"
-                        f"{item['fats']}/"
-                        f"{item['carbs']}"
-                    ))
 
                     btn_del = QPushButton("Удалить")
-                    btn_del.clicked.connect(
-                        lambda checked, mid=meal["id"]:
-                        self.delete_meal(mid)
-                    )
+                    btn_del.clicked.connect(lambda checked, mid=meal["id"]: self.delete_meal(mid))
                     self.table.setCellWidget(row, 5, btn_del)
 
         except Exception as e:
-            QMessageBox.warning(
-                self, "Ошибка",
-                f"Не удалось загрузить данные:\n{e}"
-            )
+            QMessageBox.warning(self, "Ошибка", f"Не удалось загрузить данные:\n{e}")
 
     def delete_meal(self, meal_id):
         resp = self.api.delete_meal(meal_id)
@@ -189,7 +171,5 @@ class MainWindow(QMainWindow):
             self.load_daily_data()
 
     def open_add_meal(self):
-        self.add_window = AddMealWindow(
-            self.api, self.current_date, self.load_daily_data
-        )
+        self.add_window = AddMealWindow(self.api, self.current_date, self.load_daily_data)
         self.add_window.show()

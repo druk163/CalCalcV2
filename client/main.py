@@ -14,9 +14,7 @@ class App:
         self.main_window = None
 
     def show_login(self):
-        self.login_window = LoginWindow(
-            self.api, self.on_login_success
-        )
+        self.login_window = LoginWindow(self.api, self.on_login_success)
         self.login_window.show()
 
     def on_login_success(self):

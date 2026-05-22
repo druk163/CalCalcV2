@@ -1,7 +1,15 @@
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QLineEdit,
-    QPushButton, QMessageBox, QTabWidget,
-    QSpinBox, QDoubleSpinBox, QComboBox, QFormLayout
+    QWidget,
+    QVBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QMessageBox,
+    QTabWidget,
+    QSpinBox,
+    QDoubleSpinBox,
+    QComboBox,
+    QFormLayout,
 )
 from PyQt6.QtCore import Qt
 
@@ -20,9 +28,7 @@ class LoginWindow(QWidget):
 
         title = QLabel("Nutrition Tracker")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet(
-            "font-size: 22px; font-weight: bold; margin: 10px;"
-        )
+        title.setStyleSheet("font-size: 22px; font-weight: bold; margin: 10px;")
         layout.addWidget(title)
 
         tabs = QTabWidget()
@@ -93,16 +99,12 @@ class LoginWindow(QWidget):
 
     def do_login(self):
         resp = self.api.login(
-            self.login_username.text().strip(),
-            self.login_password.text().strip()
+            self.login_username.text().strip(), self.login_password.text().strip()
         )
         if resp.status_code == 200:
             self.on_success()
         else:
-            QMessageBox.warning(
-                self, "Ошибка",
-                resp.json().get("detail", "Ошибка")
-            )
+            QMessageBox.warning(self, "Ошибка", resp.json().get("detail", "Ошибка"))
 
     def do_register(self):
         resp = self.api.register(
@@ -114,12 +116,7 @@ class LoginWindow(QWidget):
             gender=self.reg_gender.currentText(),
         )
         if resp.status_code == 200:
-            QMessageBox.information(
-                self, "Успех", "Регистрация прошла успешно!"
-            )
+            QMessageBox.information(self, "Успех", "Регистрация прошла успешно!")
             self.on_success()
         else:
-            QMessageBox.warning(
-                self, "Ошибка",
-                resp.json().get("detail", "Ошибка")
-            )
+            QMessageBox.warning(self, "Ошибка", resp.json().get("detail", "Ошибка"))
