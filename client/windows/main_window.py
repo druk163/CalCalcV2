@@ -1,3 +1,7 @@
+from client.windows.add_product_window import AddProductWindow
+
+from client.windows.add_meal_window import AddMealWindow
+
 from PyQt6.QtWidgets import (
     QMainWindow,
     QWidget,
@@ -98,7 +102,9 @@ class MainWindow(QMainWindow):
         )
         btn_add.clicked.connect(self.open_add_meal)
         btn_layout.addWidget(btn_add)
-
+        btn_add_product = QPushButton("Добавить продукт")
+        btn_add_product.clicked.connect(self.open_add_product)
+        btn_layout.addWidget(btn_add_product)
         btn_refresh = QPushButton("Обновить")
         btn_refresh.clicked.connect(self.load_daily_data)
         btn_layout.addWidget(btn_refresh)
@@ -173,3 +179,7 @@ class MainWindow(QMainWindow):
     def open_add_meal(self):
         self.add_window = AddMealWindow(self.api, self.current_date, self.load_daily_data)
         self.add_window.show()
+
+    def open_add_product(self):
+        self.product_window = AddProductWindow(self.api)
+        self.product_window.show()
